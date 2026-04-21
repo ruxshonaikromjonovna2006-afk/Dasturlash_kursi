@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BilTech — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:#0a0a0f; --bg2:#0f0f1a; --card:#13131f; --card2:#1a1a2e;
+  --accent:#00d4ff; --accent2:#7c3aed; --accent3:#10b981; --danger:#ef4444;
+  --text:#e8e8f0; --text2:#8888aa; --border:rgba(255,255,255,0.07);
+  --font-head:'Syne',sans-serif; --font-body:'DM Sans',sans-serif;
+}
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--text); font-family:var(--font-body); min-height:100vh; }
+
+/* LOGIN */
+.login-overlay {
+  position:fixed; inset:0; background:var(--bg);
+  display:flex; align-items:center; justify-content:center; z-index:1000;
+}
+.login-card {
+  background:var(--card); border:1px solid var(--border); border-radius:20px;
+  padding:48px; width:100%; max-width:420px; text-align:center;
+}
+.login-logo { font-family:var(--font-head); font-size:28px; font-weight:800; margin-bottom:8px; }
+.login-logo span { color:var(--accent); }
+.login-card p { color:var(--text2); margin-bottom:32px; }
+.login-form .field { margin-bottom:18px; text-align:left; }
+.login-form label { display:block; font-size:13px; color:var(--text2); font-weight:600; margin-bottom:8px; }
+.login-form input {
+  width:100%; background:var(--bg); border:1px solid var(--border);
+  border-radius:10px; padding:13px 16px; color:var(--text); font-size:15px;
+  font-family:var(--font-body); outline:none; transition:border 0.2s;
+}
+.login-form input:focus { border-color:var(--accent2); }
+.login-btn {
+  width:100%; background:linear-gradient(135deg,var(--accent2),var(--accent));
+  border:none; border-radius:12px; padding:14px; color:#fff;
+  font-size:16px; font-weight:700; cursor:pointer; margin-top:8px;
+  font-family:var(--font-head); transition:all 0.3s;
+}
+.login-btn:hover { opacity:.9; transform:translateY(-1px); }
+.login-error { color:#ef4444; font-size:13px; margin-top:12px; display:none; }
+
+/* LAYOUT */
+.admin-layout { display:flex; min-height:100vh; }
+.sidebar {
+  width:260px; flex-shrink:0; background:var(--bg2); border-right:1px solid var(--border);
+  position:fixed; top:0; left:0; bottom:0; padding:24px 0; overflow-y:auto;
+  transition:transform 0.3s;
+}
+.sidebar-logo {
+  padding:0 24px 24px; border-bottom:1px solid var(--border);
+  font-family:var(--font-head); font-size:22px; font-weight:800;
+}
+.sidebar-logo span { color:var(--accent); }
+.sidebar-logo small { display:block; font-size:11px; color:var(--text2); font-weight:400; margin-top:2px; }
+.sidebar-nav { padding:16px 0; }
+.nav-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 24px; cursor:pointer;
+  color:var(--text2); font-size:14px; font-weight:500;
+  transition:all 0.2s; border:none; background:none;
+  width:100%; text-align:left; text-decoration:none;
+}
+.nav-item:hover { color:var(--text); background:rgba(255,255,255,0.04); }
+.nav-item.active { color:var(--accent); background:rgba(0,212,255,0.08); border-right:2px solid var(--accent); }
+.nav-icon { font-size:18px; width:24px; text-align:center; }
+.sidebar-footer {
+  padding:16px 24px 0; border-top:1px solid var(--border); margin-top:auto;
+  position:absolute; bottom:0; left:0; right:0;
+}
+.logout-btn {
+  display:flex; align-items:center; gap:10px;
+  width:100%; padding:12px; border:1px solid var(--border);
+  border-radius:10px; background:none; color:var(--text2);
+  cursor:pointer; font-size:14px; transition:all 0.2s;
+}
+.logout-btn:hover { border-color:#ef4444; color:#ef4444; }
+
+/* MAIN */
+.main { margin-left:260px; flex:1; padding:32px; }
+.topbar {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:32px;
+}
+.topbar h1 { font-family:var(--font-head); font-size:28px; font-weight:800; }
+.topbar-right { display:flex; align-items:center; gap:16px; }
+.admin-badge {
+  background:rgba(124,58,237,0.15); border:1px solid rgba(124,58,237,0.3);
+  color:var(--accent2); padding:6px 14px; border-radius:20px; font-size:13px; font-weight:700;
+}
+.current-time { font-size:13px; color:var(--text2); }
+
+/* STATS */
+.stats-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:20px; margin-bottom:32px; }
+.stat-card {
+  background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px;
+  transition:all 0.3s;
+}
+.stat-card:hover { border-color:rgba(0,212,255,0.3); transform:translateY(-2px); }
+.stat-card .s-icon { font-size:28px; margin-bottom:12px; }
+.stat-card .s-num { font-family:var(--font-head); font-size:34px; font-weight:800; }
+.stat-card .s-label { color:var(--text2); font-size:13px; margin-top:4px; }
+.stat-card .s-change { font-size:12px; margin-top:8px; }
+.positive { color:var(--accent3); }
+.negative { color:#ef4444; }
+
+/* SECTION TABS */
+.section-panel { display:none; }
+.section-panel.active { display:block; }
+
+/* TABLE */
+.table-card { background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+.table-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 24px; border-bottom:1px solid var(--border);
+}
+.table-head h3 { font-family:var(--font-head); font-size:18px; font-weight:700; }
+.table-actions { display:flex; gap:10px; }
+.btn-sm {
+  padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600;
+  cursor:pointer; transition:all 0.2s; border:none;
+}
+.btn-primary-sm {
+  background:linear-gradient(135deg,var(--accent2),var(--accent)); color:#fff;
+}
+.btn-outline-sm { background:none; border:1px solid var(--border); color:var(--text2); }
+.btn-outline-sm:hover { border-color:var(--accent); color:var(--accent); }
+.btn-danger-sm { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#ef4444; }
+
+.search-box {
+  padding:12px 24px; border-bottom:1px solid var(--border);
+  display:flex; gap:12px;
+}
+.search-input {
+  flex:1; background:var(--bg); border:1px solid var(--border); border-radius:8px;
+  padding:10px 14px; color:var(--text); font-size:14px; outline:none;
+}
+.search-input:focus { border-color:var(--accent2); }
+.filter-select {
+  background:var(--bg); border:1px solid var(--border); border-radius:8px;
+  padding:10px 14px; color:var(--text); font-size:13px; outline:none;
+}
+
+.data-table { width:100%; border-collapse:collapse; }
+.data-table th {
+  text-align:left; padding:14px 24px; font-size:12px; font-weight:700;
+  color:var(--text2); text-transform:uppercase; letter-spacing:1px;
+  border-bottom:1px solid var(--border); background:var(--bg2);
+}
+.data-table td { padding:14px 24px; font-size:14px; border-bottom:1px solid var(--border); }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tr:hover td { background:rgba(255,255,255,0.02); }
+.status-badge {
+  display:inline-block; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700;
+}
+.status-new { background:rgba(0,212,255,0.15); color:var(--accent); }
+.status-called { background:rgba(16,185,129,0.15); color:var(--accent3); }
+.status-enrolled { background:rgba(124,58,237,0.15); color:var(--accent2); }
+.status-active { background:rgba(16,185,129,0.15); color:var(--accent3); }
+.status-inactive { background:rgba(239,68,68,0.15); color:#ef4444; }
+.action-btns { display:flex; gap:6px; }
+.act-btn {
+  padding:5px 10px; border-radius:6px; font-size:11px; font-weight:700;
+  cursor:pointer; border:none; transition:all 0.2s;
+}
+.edit-btn { background:rgba(0,212,255,0.15); color:var(--accent); }
+.del-btn { background:rgba(239,68,68,0.15); color:#ef4444; }
+.call-btn { background:rgba(16,185,129,0.15); color:var(--accent3); }
+
+/* MODAL */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:500;
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background:var(--card); border:1px solid var(--border); border-radius:20px;
+  padding:36px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto;
+}
+.modal h3 { font-family:var(--font-head); font-size:20px; font-weight:800; margin-bottom:24px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.modal .field { margin-bottom:16px; }
+.modal label { display:block; font-size:13px; color:var(--text2); font-weight:600; margin-bottom:8px; }
+.modal input, .modal select, .modal textarea {
+  width:100%; background:var(--bg); border:1px solid var(--border);
+  border-radius:10px; padding:11px 14px; color:var(--text); font-size:14px;
+  font-family:var(--font-body); outline:none; transition:border 0.2s;
+}
+.modal input:focus, .modal select:focus, .modal textarea:focus { border-color:var(--accent2); }
+.modal-footer { display:flex; gap:12px; justify-content:flex-end; margin-top:24px; }
+
+/* CHART */
+.chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:32px; }
+.chart-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; }
+.chart-card h3 { font-family:var(--font-head); font-size:16px; font-weight:700; margin-bottom:20px; }
+.bar-chart { display:flex; align-items:flex-end; gap:8px; height:140px; }
+.bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.bar-val { font-size:11px; color:var(--text2); }
+.bar { width:100%; border-radius:6px 6px 0 0; transition:all 0.3s; cursor:pointer; min-width:28px; }
+.bar:hover { opacity:.8; }
+.bar-label { font-size:10px; color:var(--text2); text-align:center; margin-top:4px; }
+.donut-wrap { display:flex; align-items:center; gap:24px; }
+.donut { position:relative; width:120px; height:120px; flex-shrink:0; }
+.donut svg { transform:rotate(-90deg); }
+.donut-center {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+}
+.donut-center .dn { font-family:var(--font-head); font-size:22px; font-weight:800; }
+.donut-center .dl { font-size:10px; color:var(--text2); }
+.donut-legend { flex:1; }
+.legend-item { display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:13px; }
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:24px; right:24px; z-index:9999;
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:14px 20px; font-size:14px; font-weight:600;
+  transform:translateY(100px); opacity:0; transition:all 0.3s;
+  max-width:320px;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.success { border-color:rgba(16,185,129,0.4); color:var(--accent3); }
+.toast.error { border-color:rgba(239,68,68,0.4); color:#ef4444; }
+
+@media(max-width:900px) {
+  .sidebar { transform:translateX(-100%); z-index:100; }
+  .sidebar.open { transform:none; }
+  .main { margin-left:0; padding:20px; }
+  .chart-grid { grid-template-columns:1fr; }
+  .form-row { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logo">⟨BT⟩ <span>BilTech</span></div>
+    <p>Admin panelga kirish uchun ma'lumotlarni kiriting</p>
+    <div class="login-form">
+      <div class="field">
+        <label>Login</label>
+        <input type="text" id="loginUser" placeholder="admin" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Parol</label>
+        <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="login-btn" onclick="doLogin()">Kirish →</button>
+      <div class="login-error" id="loginError">❌ Login yoki parol noto'g'ri!</div>
+    </div>
+    <p style="margin-top:20px;font-size:12px;color:var(--text2)">Demo: admin / biltech2024</p>
+  </div>
+</div>
+
+<!-- ADMIN LAYOUT -->
+<div class="admin-layout" id="adminLayout" style="display:none">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      ⟨BT⟩ BilTech
+      <small>Admin Panel v1.0</small>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="showTab('dashboard',this)"><span class="nav-icon">📊</span> Dashboard</button>
+      <button class="nav-item" onclick="showTab('applications',this)"><span class="nav-icon">📋</span> Arizalar <span id="appBadge" style="margin-left:auto;background:var(--accent);color:#000;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700"></span></button>
+      <button class="nav-item" onclick="showTab('students',this)"><span class="nav-icon">👥</span> Talabalar</button>
+      <button class="nav-item" onclick="showTab('courses',this)"><span class="nav-icon">🎓</span> Kurslar</button>
+      <button class="nav-item" onclick="showTab('teachers',this)"><span class="nav-icon">👨‍🏫</span> O'qituvchilar</button>
+      <button class="nav-item" onclick="showTab('income',this)"><span class="nav-icon">💰</span> Daromad</button>
+      <button class="nav-item" onclick="showTab('settings',this)"><span class="nav-icon">⚙️</span> Sozlamalar</button>
+      <hr style="border-color:var(--border);margin:12px 24px">
+      <a class="nav-item" href="index.html" target="_blank"><span class="nav-icon">🌐</span> Saytni ko'rish</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">🚪 Chiqish</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <h1 id="pageTitle">Dashboard</h1>
+      <div class="topbar-right">
+        <span class="current-time" id="clock"></span>
+        <span class="admin-badge">👤 Admin</span>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="section-panel active" id="tab-dashboard">
+      <div class="stats-row" id="dashStats"></div>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <h3>📈 Oylik arizalar</h3>
+          <div class="bar-chart" id="monthlyChart"></div>
+        </div>
+        <div class="chart-card">
+          <h3>🎓 Kurslar bo'yicha talabalar</h3>
+          <div class="donut-wrap">
+            <div class="donut">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="20"/>
+                <circle id="donut1" cx="60" cy="60" r="48" fill="none" stroke="var(--accent)" stroke-width="20" stroke-dasharray="0 302" stroke-linecap="round"/>
+                <circle id="donut2" cx="60" cy="60" r="48" fill="none" stroke="var(--accent2)" stroke-width="20" stroke-dasharray="0 302" stroke-linecap="round"/>
+                <circle id="donut3" cx="60" cy="60" r="48" fill="none" stroke="var(--accent3)" stroke-width="20" stroke-dasharray="0 302" stroke-linecap="round"/>
+              </svg>
+              <div class="donut-center"><div class="dn" id="donutTotal">0</div><div class="dl">Talaba</div></div>
+            </div>
+            <div class="donut-legend" id="donutLegend"></div>
+          </div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-head"><h3>🔔 Oxirgi arizalar</h3></div>
+        <table class="data-table" id="recentAppsTable">
+          <thead><tr><th>Ism</th><th>Telefon</th><th>Kurs</th><th>Sana</th><th>Holat</th><th>Amal</th></tr></thead>
+          <tbody id="recentAppsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- APPLICATIONS -->
+    <div class="section-panel" id="tab-applications">
+      <div class="table-card">
+        <div class="table-head">
+          <h3>📋 Barcha Arizalar</h3>
+          <div class="table-actions">
+            <button class="btn-sm btn-outline-sm" onclick="exportCSV('apps')">⬇ CSV</button>
+            <button class="btn-sm btn-primary-sm" onclick="clearApps()">🗑 Tozalash</button>
+          </div>
+        </div>
+        <div class="search-box">
+          <input class="search-input" id="appSearch" placeholder="🔍 Qidirish..." oninput="filterApps()">
+          <select class="filter-select" id="appFilter" onchange="filterApps()">
+            <option value="">Barchasi</option>
+            <option value="Yangi">Yangi</option>
+            <option value="Qo'ng'iroq qilindi">Qo'ng'iroq qilindi</option>
+            <option value="Yozildi">Yozildi</option>
+          </select>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Ism Familiya</th><th>Telefon</th><th>Kurs</th><th>Xabar</th><th>Sana</th><th>Holat</th><th>Amal</th></tr></thead>
+          <tbody id="appsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STUDENTS -->
+    <div class="section-panel" id="tab-students">
+      <div class="table-card">
+        <div class="table-head">
+          <h3>👥 Talabalar Ro'yxati</h3>
+          <div class="table-actions">
+            <button class="btn-sm btn-primary-sm" onclick="openStudentModal()">+ Qo'shish</button>
+          </div>
+        </div>
+        <div class="search-box">
+          <input class="search-input" id="stuSearch" placeholder="🔍 Qidirish..." oninput="renderStudents()">
+        </div>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Ism</th><th>Telefon</th><th>Kurs</th><th>To'lov</th><th>Holat</th><th>Amal</th></tr></thead>
+          <tbody id="studentsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COURSES -->
+    <div class="section-panel" id="tab-courses">
+      <div class="table-card">
+        <div class="table-head">
+          <h3>🎓 Kurslar</h3>
+          <div class="table-actions">
+            <button class="btn-sm btn-primary-sm" onclick="openCourseModal()">+ Kurs qo'shish</button>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Kurs nomi</th><th>Davomiyligi</th><th>Narxi</th><th>Talabalar</th><th>Holat</th><th>Amal</th></tr></thead>
+          <tbody id="coursesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TEACHERS -->
+    <div class="section-panel" id="tab-teachers">
+      <div class="table-card">
+        <div class="table-head">
+          <h3>👨‍🏫 O'qituvchilar</h3>
+          <div class="table-actions">
+            <button class="btn-sm btn-primary-sm" onclick="openTeacherModal()">+ Qo'shish</button>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>F.I.O</th><th>Mutaxassislik</th><th>Tajriba</th><th>Kurslar</th><th>Holat</th><th>Amal</th></tr></thead>
+          <tbody id="teachersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- INCOME -->
+    <div class="section-panel" id="tab-income">
+      <div class="stats-row">
+        <div class="stat-card"><div class="s-icon">💵</div><div class="s-num" id="totalIncome">0</div><div class="s-label">Jami daromad (so'm)</div></div>
+        <div class="stat-card"><div class="s-icon">📅</div><div class="s-num" id="monthIncome">0</div><div class="s-label">Bu oy (so'm)</div></div>
+        <div class="stat-card"><div class="s-icon">👤</div><div class="s-num" id="avgIncome">0</div><div class="s-label">O'rtacha (talaba)</div></div>
+      </div>
+      <div class="table-card">
+        <div class="table-head">
+          <h3>💰 To'lovlar Jurnali</h3>
+          <button class="btn-sm btn-primary-sm" onclick="openPayModal()">+ To'lov qo'shish</button>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Talaba</th><th>Kurs</th><th>Summa</th><th>Sana</th><th>Izoh</th></tr></thead>
+          <tbody id="incomeTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="section-panel" id="tab-settings">
+      <div style="max-width:560px">
+        <div class="table-card" style="padding:28px;border-radius:16px">
+          <h3 style="font-family:var(--font-head);margin-bottom:24px">⚙️ Sozlamalar</h3>
+          <div class="field" style="margin-bottom:18px">
+            <label style="display:block;font-size:13px;color:var(--text2);font-weight:600;margin-bottom:8px">Markaz nomi</label>
+            <input id="s-name" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;outline:none" value="BilTech IT O'quv Markazi">
+          </div>
+          <div class="field" style="margin-bottom:18px">
+            <label style="display:block;font-size:13px;color:var(--text2);font-weight:600;margin-bottom:8px">Telefon</label>
+            <input id="s-phone" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;outline:none" value="+998 90 123 45 67">
+          </div>
+          <div class="field" style="margin-bottom:18px">
+            <label style="display:block;font-size:13px;color:var(--text2);font-weight:600;margin-bottom:8px">Email</label>
+            <input id="s-email" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;outline:none" value="info@biltech.uz">
+          </div>
+          <div class="field" style="margin-bottom:24px">
+            <label style="display:block;font-size:13px;color:var(--text2);font-weight:600;margin-bottom:8px">Manzil</label>
+            <input id="s-addr" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;outline:none" value="Toshkent, Chilonzor, 14-kvartal">
+          </div>
+          <hr style="border-color:var(--border);margin-bottom:24px">
+          <h4 style="font-family:var(--font-head);margin-bottom:16px">🔐 Parolni o'zgartirish</h4>
+          <div class="field" style="margin-bottom:14px">
+            <label style="display:block;font-size:13px;color:var(--text2);font-weight:600;margin-bottom:8px">Yangi parol</label>
+            <input type="password" id="s-pass1" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;outline:none" placeholder="••••••••">
+          </div>
+          <div class="field" style="margin-bottom:20px">
+            <label style="display:block;font-size:13px;color:var(--text2);font-weight:600;margin-bottom:8px">Tasdiqlang</label>
+            <input type="password" id="s-pass2" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;outline:none" placeholder="••••••••">
+          </div>
+          <button class="btn-sm btn-primary-sm" style="padding:12px 24px;font-size:14px" onclick="saveSettings()">💾 Saqlash</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="studentModal">
+  <div class="modal">
+    <h3 id="stuModalTitle">👤 Yangi Talaba</h3>
+    <div class="form-row">
+      <div class="field"><label>Ism</label><input id="stu-name" placeholder="Ali Karimov"></div>
+      <div class="field"><label>Telefon</label><input id="stu-phone" placeholder="+998 90 000 00 00"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Kurs</label><select id="stu-course"><option>Web Dasturlash</option><option>Mobile App</option><option>AI/ML</option><option>Kiberxavfsizlik</option><option>Data Science</option><option>DevOps</option></select></div>
+      <div class="field"><label>Holat</label><select id="stu-status"><option>Faol</option><option>Faol emas</option><option>Bitirdi</option></select></div>
+    </div>
+    <div class="field"><label>To'lov holati</label><select id="stu-pay"><option>To'langan</option><option>To'lanmagan</option><option>Qisman</option></select></div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-outline-sm" onclick="closeModal('studentModal')">Bekor</button>
+      <button class="btn-sm btn-primary-sm" onclick="saveStudent()">Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="courseModal">
+  <div class="modal">
+    <h3>🎓 Kurs Ma'lumotlari</h3>
+    <div class="field"><label>Kurs nomi</label><input id="c-name" placeholder="Web Dasturlash"></div>
+    <div class="form-row">
+      <div class="field"><label>Davomiyligi</label><input id="c-dur" placeholder="6 oy"></div>
+      <div class="field"><label>Narxi (so'm/oy)</label><input id="c-price" placeholder="1200000" type="number"></div>
+    </div>
+    <div class="field"><label>Tavsif</label><textarea id="c-desc" rows="3" placeholder="Kurs haqida..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-outline-sm" onclick="closeModal('courseModal')">Bekor</button>
+      <button class="btn-sm btn-primary-sm" onclick="saveCourse()">Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="teacherModal">
+  <div class="modal">
+    <h3>👨‍🏫 O'qituvchi</h3>
+    <div class="form-row">
+      <div class="field"><label>F.I.O</label><input id="t-name" placeholder="Sardor Toshmatov"></div>
+      <div class="field"><label>Mutaxassislik</label><input id="t-role" placeholder="Full Stack Developer"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Tajriba (yil)</label><input id="t-exp" type="number" placeholder="5"></div>
+      <div class="field"><label>Telefon</label><input id="t-phone" placeholder="+998 90 000 00 00"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-outline-sm" onclick="closeModal('teacherModal')">Bekor</button>
+      <button class="btn-sm btn-primary-sm" onclick="saveTeacher()">Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="payModal">
+  <div class="modal">
+    <h3>💰 To'lov Qo'shish</h3>
+    <div class="field"><label>Talaba</label><input id="p-student" placeholder="Ism Familiya"></div>
+    <div class="form-row">
+      <div class="field"><label>Kurs</label><select id="p-course"><option>Web Dasturlash</option><option>Mobile App</option><option>AI/ML</option><option>Kiberxavfsizlik</option><option>Data Science</option></select></div>
+      <div class="field"><label>Summa (so'm)</label><input id="p-amount" type="number" placeholder="1200000"></div>
+    </div>
+    <div class="field"><label>Izoh</label><input id="p-note" placeholder="Iyun oyi to'lovi"></div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-outline-sm" onclick="closeModal('payModal')">Bekor</button>
+      <button class="btn-sm btn-primary-sm" onclick="savePayment()">Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script>
+// ===== AUTH =====
+let ADMIN = JSON.parse(localStorage.getItem('biltech_admin')) || { user:'admin', pass:'biltech2024' };
+const CREDS = () => ({ user: localStorage.getItem('bt_user')||'admin', pass: localStorage.getItem('bt_pass')||'biltech2024' });
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const creds = CREDS();
+  if (u === creds.user && p === creds.pass) {
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('adminLayout').style.display = 'flex';
+    initAdmin();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    setTimeout(() => document.getElementById('loginError').style.display = 'none', 3000);
+  }
+}
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  document.getElementById('adminLayout').style.display = 'none';
+  document.getElementById('loginOverlay').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+// ===== DATA =====
+function getData(key, def=[]) {
+  try { return JSON.parse(localStorage.getItem(key)) || def; } catch { return def; }
+}
+function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+function initDefaultData() {
+  if (!localStorage.getItem('biltech_students')) {
+    setData('biltech_students', [
+      {id:1, name:'Jasur Mirzayev', phone:'+998901234567', course:'Web Dasturlash', pay:'To\'langan', status:'Faol'},
+      {id:2, name:'Shaxlo Ergasheva', phone:'+998907654321', course:'Mobile App', pay:'To\'langan', status:'Faol'},
+      {id:3, name:'Bobur Hasanov', phone:'+998901112233', course:'Data Science', pay:'Qisman', status:'Faol'},
+      {id:4, name:'Aziz Tursunov', phone:'+998909988776', course:'AI/ML', pay:'To\'lanmagan', status:'Faol emas'},
+    ]);
+  }
+  if (!localStorage.getItem('biltech_teachers')) {
+    setData('biltech_teachers', BILTECH_DATA.teachers.map((t,i) => ({
+      id:i+1, name:t.name, role:t.role, exp: parseInt(t.exp)||6, phone:'+998901234567', status:'Faol'
+    })));
+  }
+  if (!localStorage.getItem('biltech_courses_admin')) {
+    setData('biltech_courses_admin', BILTECH_DATA.courses.map(c => ({
+      id:c.id, name:c.title, duration:c.duration, price:c.price.replace(/,/g,''),
+      students:parseInt(c.students), status:'Faol'
+    })));
+  }
+  if (!localStorage.getItem('biltech_payments')) {
+    setData('biltech_payments', [
+      {id:1, student:'Jasur Mirzayev', course:'Web Dasturlash', amount:1200000, date:'2024-06-01', note:'Iyun oyi'},
+      {id:2, student:'Shaxlo Ergasheva', course:'Mobile App', amount:1400000, date:'2024-06-01', note:'Iyun oyi'},
+    ]);
+  }
+}
+
+// ===== CLOCK =====
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleDateString('uz-UZ') + ' ' + now.toLocaleTimeString('uz-UZ');
+}
+setInterval(updateClock, 1000); updateClock();
+
+// ===== TABS =====
+function showTab(tab, btn) {
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+  const titles = {dashboard:'Dashboard',applications:'Arizalar',students:'Talabalar',courses:'Kurslar',teachers:"O'qituvchilar",income:'Daromad',settings:'Sozlamalar'};
+  document.getElementById('pageTitle').textContent = titles[tab]||tab;
+  if(tab==='applications') renderApps();
+  if(tab==='students') renderStudents();
+  if(tab==='courses') renderCourses();
+  if(tab==='teachers') renderTeachersAdmin();
+  if(tab==='income') renderIncome();
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  const apps = getData('biltech_apps');
+  const students = getData('biltech_students');
+  const payments = getData('biltech_payments');
+  const total = payments.reduce((s,p) => s + p.amount, 0);
+  const newApps = apps.filter(a => a.status === 'Yangi').length;
+
+  document.getElementById('appBadge').textContent = newApps > 0 ? newApps : '';
+
+  document.getElementById('dashStats').innerHTML = [
+    { icon:'📋', num: apps.length, label:'Jami arizalar', change:'+' + newApps + ' yangi', pos:true },
+    { icon:'👥', num: students.length, label:'Faol talabalar', change:'+2 bu oy', pos:true },
+    { icon:'🎓', num: getData('biltech_courses_admin').length, label:'Kurslar', change:'', pos:true },
+    { icon:'💰', num: (total/1000000).toFixed(1)+'M', label:'Jami daromad', change:'+12% o\'sdi', pos:true },
+  ].map(s => `
+    <div class="stat-card">
+      <div class="s-icon">${s.icon}</div>
+      <div class="s-num">${s.num}</div>
+      <div class="s-label">${s.label}</div>
+      ${s.change ? `<div class="s-change ${s.pos?'positive':''}">${s.change}</div>` : ''}
+    </div>
+  `).join('');
+
+  // Monthly chart
+  const months = ['Yan','Fev','Mar','Apr','May','Iyn','Iyl','Avg','Sen','Okt','Noy','Dek'];
+  const vals = [12,18,15,22,28,35,30,42,38,45,40,52];
+  const max = Math.max(...vals);
+  const colors = ['var(--accent)','var(--accent2)','var(--accent3)'];
+  document.getElementById('monthlyChart').innerHTML = vals.map((v,i) => `
+    <div class="bar-wrap">
+      <span class="bar-val">${v}</span>
+      <div class="bar" style="height:${(v/max)*100}%;background:${colors[i%3]};opacity:0.8" title="${months[i]}: ${v} ariza"></div>
+      <span class="bar-label">${months[i]}</span>
+    </div>
+  `).join('');
+
+  // Donut chart
+  const courses = getData('biltech_courses_admin');
+  const top3 = courses.slice(0,3);
+  const totalStu = top3.reduce((s,c) => s+c.students, 0);
+  const circumference = 2 * Math.PI * 48;
+  let offset = 0;
+  const donutColors = ['var(--accent)','var(--accent2)','var(--accent3)'];
+  top3.forEach((c,i) => {
+    const pct = c.students / totalStu;
+    const dash = pct * circumference;
+    document.getElementById('donut'+(i+1)).setAttribute('stroke-dasharray', `${dash} ${circumference-dash}`);
+    document.getElementById('donut'+(i+1)).setAttribute('stroke-dashoffset', `-${offset}`);
+    offset += dash;
+  });
+  document.getElementById('donutTotal').textContent = totalStu;
+  document.getElementById('donutLegend').innerHTML = top3.map((c,i) => `
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${donutColors[i]}"></div>
+      <span style="color:var(--text2)">${c.name.substring(0,18)}</span>
+      <span style="margin-left:auto;font-weight:700">${c.students}</span>
+    </div>
+  `).join('');
+
+  // Recent apps
+  const recent = apps.slice(-5).reverse();
+  document.getElementById('recentAppsBody').innerHTML = recent.length ? recent.map(a => `
+    <tr>
+      <td>${a.name}</td>
+      <td>${a.phone}</td>
+      <td>${a.course||'—'}</td>
+      <td>${a.date}</td>
+      <td><span class="status-badge ${statusClass(a.status)}">${a.status}</span></td>
+      <td><div class="action-btns">
+        <button class="act-btn call-btn" onclick="updateAppStatus(${a.id},'Qo\\'ng\\'iroq qilindi')">📞</button>
+        <button class="act-btn edit-btn" onclick="updateAppStatus(${a.id},'Yozildi')">✅</button>
+      </div></td>
+    </tr>
+  `).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:32px">Hozircha ariza yo\'q</td></tr>';
+}
+
+// ===== APPLICATIONS =====
+function renderApps(filter) {
+  let apps = getData('biltech_apps');
+  const search = document.getElementById('appSearch')?.value.toLowerCase()||'';
+  const st = document.getElementById('appFilter')?.value||'';
+  if(search) apps = apps.filter(a => a.name.toLowerCase().includes(search) || a.phone.includes(search) || (a.course||'').toLowerCase().includes(search));
+  if(st) apps = apps.filter(a => a.status===st);
+  document.getElementById('appsTableBody').innerHTML = apps.length ? apps.reverse().map((a,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${a.name}</strong></td>
+      <td>${a.phone}</td>
+      <td>${a.course||'—'}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.message||'—'}</td>
+      <td>${a.date}</td>
+      <td><span class="status-badge ${statusClass(a.status)}">${a.status}</span></td>
+      <td><div class="action-btns">
+        <button class="act-btn call-btn" onclick="updateAppStatus(${a.id},'Qo\\'ng\\'iroq qilindi')">📞</button>
+        <button class="act-btn edit-btn" onclick="updateAppStatus(${a.id},'Yozildi')">✅</button>
+        <button class="act-btn del-btn" onclick="deleteApp(${a.id})">🗑</button>
+      </div></td>
+    </tr>
+  `).join('') : '<tr><td colspan="8" style="text-align:center;color:var(--text2);padding:32px">Ariza topilmadi</td></tr>';
+}
+
+function filterApps() { renderApps(); }
+function statusClass(s) {
+  if(s==='Yangi') return 'status-new';
+  if(s==='Qo\'ng\'iroq qilindi') return 'status-called';
+  if(s==='Yozildi') return 'status-enrolled';
+  return 'status-new';
+}
+function updateAppStatus(id, status) {
+  const apps = getData('biltech_apps');
+  const app = apps.find(a => a.id === id);
+  if(app) { app.status = status; setData('biltech_apps', apps); renderApps(); renderDashboard(); toast('✅ Holat yangilandi', 'success'); }
+}
+function deleteApp(id) {
+  if(!confirm('Bu arizani o\'chirishni tasdiqlaysizmi?')) return;
+  setData('biltech_apps', getData('biltech_apps').filter(a => a.id !== id));
+  renderApps(); renderDashboard(); toast('🗑 Ariza o\'chirildi');
+}
+function clearApps() {
+  if(!confirm('Barcha arizalarni o\'chirishni tasdiqlaysizmi?')) return;
+  setData('biltech_apps', []); renderApps(); renderDashboard(); toast('✅ Tozalandi');
+}
+
+// ===== STUDENTS =====
+function renderStudents() {
+  const search = document.getElementById('stuSearch')?.value.toLowerCase()||'';
+  let students = getData('biltech_students');
+  if(search) students = students.filter(s => s.name.toLowerCase().includes(search) || s.course.toLowerCase().includes(search));
+  document.getElementById('studentsTableBody').innerHTML = students.map((s,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${s.name}</strong></td>
+      <td>${s.phone}</td>
+      <td>${s.course}</td>
+      <td><span class="status-badge ${s.pay==='To\'langan'?'status-active':s.pay==='Qisman'?'status-called':'status-inactive'}">${s.pay}</span></td>
+      <td><span class="status-badge ${s.status==='Faol'?'status-active':'status-inactive'}">${s.status}</span></td>
+      <td><div class="action-btns">
+        <button class="act-btn edit-btn" onclick="editStudent(${s.id})">✏️</button>
+        <button class="act-btn del-btn" onclick="deleteStudent(${s.id})">🗑</button>
+      </div></td>
+    </tr>
+  `).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:32px">Talaba topilmadi</td></tr>';
+}
+
+let editStuId = null;
+function openStudentModal(id) {
+  editStuId = id||null;
+  document.getElementById('stuModalTitle').textContent = id ? '✏️ Talabani tahrirlash' : '👤 Yangi Talaba';
+  if(id) {
+    const s = getData('biltech_students').find(s=>s.id===id);
+    document.getElementById('stu-name').value = s.name;
+    document.getElementById('stu-phone').value = s.phone;
+    document.getElementById('stu-course').value = s.course;
+    document.getElementById('stu-status').value = s.status;
+    document.getElementById('stu-pay').value = s.pay;
+  } else {
+    document.getElementById('stu-name').value='';
+    document.getElementById('stu-phone').value='';
+  }
+  document.getElementById('studentModal').classList.add('open');
+}
+function editStudent(id) { openStudentModal(id); }
+function deleteStudent(id) {
+  if(!confirm('Talabani o\'chirishni tasdiqlaysizmi?')) return;
+  setData('biltech_students', getData('biltech_students').filter(s=>s.id!==id));
+  renderStudents(); toast('🗑 Talaba o\'chirildi');
+}
+function saveStudent() {
+  const students = getData('biltech_students');
+  const obj = {
+    id: editStuId || Date.now(),
+    name: document.getElementById('stu-name').value,
+    phone: document.getElementById('stu-phone').value,
+    course: document.getElementById('stu-course').value,
+    status: document.getElementById('stu-status').value,
+    pay: document.getElementById('stu-pay').value
+  };
+  if(editStuId) { const idx=students.findIndex(s=>s.id===editStuId); students[idx]=obj; }
+  else students.push(obj);
+  setData('biltech_students', students);
+  closeModal('studentModal'); renderStudents(); toast('✅ Saqlandi', 'success');
+}
+
+// ===== COURSES =====
+function renderCourses() {
+  const courses = getData('biltech_courses_admin');
+  document.getElementById('coursesTableBody').innerHTML = courses.map((c,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.duration}</td>
+      <td>${Number(c.price).toLocaleString()} so'm</td>
+      <td>${c.students}</td>
+      <td><span class="status-badge ${c.status==='Faol'?'status-active':'status-inactive'}">${c.status}</span></td>
+      <td><div class="action-btns">
+        <button class="act-btn edit-btn" onclick="editCourse(${c.id})">✏️</button>
+        <button class="act-btn del-btn" onclick="deleteCourse(${c.id})">🗑</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+let editCourseId = null;
+function openCourseModal(id) {
+  editCourseId = id||null;
+  if(id) {
+    const c = getData('biltech_courses_admin').find(c=>c.id===id);
+    document.getElementById('c-name').value=c.name;
+    document.getElementById('c-dur').value=c.duration;
+    document.getElementById('c-price').value=c.price;
+    document.getElementById('c-desc').value=c.desc||'';
+  } else {
+    document.getElementById('c-name').value='';
+    document.getElementById('c-dur').value='';
+    document.getElementById('c-price').value='';
+    document.getElementById('c-desc').value='';
+  }
+  document.getElementById('courseModal').classList.add('open');
+}
+function editCourse(id) { openCourseModal(id); }
+function deleteCourse(id) {
+  if(!confirm('Kursni o\'chirishni tasdiqlaysizmi?')) return;
+  setData('biltech_courses_admin', getData('biltech_courses_admin').filter(c=>c.id!==id));
+  renderCourses(); toast('🗑 Kurs o\'chirildi');
+}
+function saveCourse() {
+  const courses = getData('biltech_courses_admin');
+  const obj = {
+    id: editCourseId||Date.now(), students:0, status:'Faol',
+    name:document.getElementById('c-name').value,
+    duration:document.getElementById('c-dur').value,
+    price:document.getElementById('c-price').value,
+    desc:document.getElementById('c-desc').value
+  };
+  if(editCourseId) { const idx=courses.findIndex(c=>c.id===editCourseId); courses[idx]=obj; }
+  else courses.push(obj);
+  setData('biltech_courses_admin',courses);
+  closeModal('courseModal'); renderCourses(); toast('✅ Saqlandi','success');
+}
+
+// ===== TEACHERS ADMIN =====
+function renderTeachersAdmin() {
+  const teachers = getData('biltech_teachers');
+  document.getElementById('teachersTableBody').innerHTML = teachers.map((t,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${t.name}</strong></td>
+      <td>${t.role}</td>
+      <td>${t.exp} yil</td>
+      <td>—</td>
+      <td><span class="status-badge ${t.status==='Faol'?'status-active':'status-inactive'}">${t.status}</span></td>
+      <td><div class="action-btns">
+        <button class="act-btn edit-btn" onclick="editTeacher(${t.id})">✏️</button>
+        <button class="act-btn del-btn" onclick="deleteTeacher(${t.id})">🗑</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+let editTeacherId=null;
+function openTeacherModal(id) {
+  editTeacherId=id||null;
+  if(id) { const t=getData('biltech_teachers').find(t=>t.id===id); document.getElementById('t-name').value=t.name; document.getElementById('t-role').value=t.role; document.getElementById('t-exp').value=t.exp; document.getElementById('t-phone').value=t.phone||''; }
+  else { ['t-name','t-role','t-exp','t-phone'].forEach(id=>document.getElementById(id).value=''); }
+  document.getElementById('teacherModal').classList.add('open');
+}
+function editTeacher(id){openTeacherModal(id);}
+function deleteTeacher(id){ if(!confirm("O'qituvchini o'chirishni tasdiqlaysizmi?")) return; setData('biltech_teachers',getData('biltech_teachers').filter(t=>t.id!==id)); renderTeachersAdmin(); toast("🗑 O'qituvchi o'chirildi"); }
+function saveTeacher(){
+  const teachers=getData('biltech_teachers');
+  const obj={id:editTeacherId||Date.now(),status:'Faol',name:document.getElementById('t-name').value,role:document.getElementById('t-role').value,exp:document.getElementById('t-exp').value,phone:document.getElementById('t-phone').value};
+  if(editTeacherId){const idx=teachers.findIndex(t=>t.id===editTeacherId);teachers[idx]=obj;}else teachers.push(obj);
+  setData('biltech_teachers',teachers); closeModal('teacherModal'); renderTeachersAdmin(); toast('✅ Saqlandi','success');
+}
+
+// ===== INCOME =====
+function renderIncome(){
+  const payments=getData('biltech_payments');
+  const total=payments.reduce((s,p)=>s+p.amount,0);
+  document.getElementById('totalIncome').textContent=total.toLocaleString();
+  document.getElementById('monthIncome').textContent=Math.floor(total*0.3).toLocaleString();
+  const students=getData('biltech_students');
+  document.getElementById('avgIncome').textContent=students.length?Math.floor(total/students.length).toLocaleString():'0';
+  document.getElementById('incomeTableBody').innerHTML=payments.reverse().map((p,i)=>`
+    <tr>
+      <td>${i+1}</td><td>${p.student}</td><td>${p.course}</td>
+      <td style="color:var(--accent3);font-weight:700">${p.amount.toLocaleString()} so'm</td>
+      <td>${p.date}</td><td>${p.note||'—'}</td>
+    </tr>
+  `).join('');
+}
+function openPayModal(){document.getElementById('payModal').classList.add('open');}
+function savePayment(){
+  const payments=getData('biltech_payments');
+  payments.push({id:Date.now(),student:document.getElementById('p-student').value,course:document.getElementById('p-course').value,amount:+document.getElementById('p-amount').value,date:new Date().toISOString().split('T')[0],note:document.getElementById('p-note').value});
+  setData('biltech_payments',payments); closeModal('payModal'); renderIncome(); toast('✅ To\'lov saqlandi','success');
+}
+
+// ===== SETTINGS =====
+function saveSettings(){
+  const p1=document.getElementById('s-pass1').value;
+  const p2=document.getElementById('s-pass2').value;
+  if(p1&&p1!==p2){toast('❌ Parollar mos emas','error');return;}
+  if(p1) localStorage.setItem('bt_pass',p1);
+  toast('✅ Sozlamalar saqlandi','success');
+}
+
+// ===== MODAL HELPERS =====
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
+
+// ===== CSV EXPORT =====
+function exportCSV(type){
+  const apps=getData('biltech_apps');
+  if(!apps.length){toast('❌ Ma\'lumot yo\'q','error');return;}
+  const rows=[['Ism','Telefon','Kurs','Xabar','Sana','Holat'],...apps.map(a=>[a.name,a.phone,a.course||'',a.message||'',a.date,a.status])];
+  const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='biltech_arizalar.csv'; a.click(); toast('✅ CSV yuklab olindi','success');
+}
+
+// ===== TOAST =====
+function toast(msg, type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+(type||'success')+' show';
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ===== INIT =====
+function initAdmin(){
+  initDefaultData();
+  renderDashboard();
+}
+</script>
+</body>
+</html>

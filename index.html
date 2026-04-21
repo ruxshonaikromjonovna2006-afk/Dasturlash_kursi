@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BilTech — IT O'quv Markazi</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <div class="logo">
+      <span class="logo-icon">⟨BT⟩</span>
+      <span class="logo-text">BilTech</span>
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Bosh sahifa</a></li>
+      <li><a href="#courses">Kurslar</a></li>
+      <li><a href="#about">Biz haqimizda</a></li>
+      <li><a href="#teachers">O'qituvchilar</a></li>
+      <li><a href="#contact">Aloqa</a></li>
+      <li><a href="admin.html" class="nav-admin-btn">Admin</a></li>
+    </ul>
+    <button class="burger" id="burger" onclick="toggleMenu()">☰</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🚀 Toshkentdagi #1 IT Markaz</div>
+    <h1 class="hero-title">
+      Kelajakni<br>
+      <span class="gradient-text">Kod bilan</span><br>
+      Yarating
+    </h1>
+    <p class="hero-desc">BilTech — zamonaviy IT texnologiyalarini o'rgatadigan, amaliy tajribaga yo'naltirilgan professional o'quv markazi.</p>
+    <div class="hero-btns">
+      <a href="#courses" class="btn-primary">Kurslarni Ko'rish</a>
+      <a href="#about" class="btn-outline">Biz Haqimizda</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num" data-target="1200">0</span><span>+</span><p>Bitiruvchi</p></div>
+      <div class="stat"><span class="stat-num" data-target="15">0</span><span>+</span><p>Kurs</p></div>
+      <div class="stat"><span class="stat-num" data-target="8">0</span><span>+</span><p>Yil tajriba</p></div>
+      <div class="stat"><span class="stat-num" data-target="95">0</span><span>%</span><p>Ish topishi</p></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="code-window">
+      <div class="code-header">
+        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+        <span class="code-title">biltech.js</span>
+      </div>
+      <div class="code-body" id="codeBody"></div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section class="courses" id="courses">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Kurslar</span>
+      <h2>Bizning <span class="gradient-text">Dasturlar</span></h2>
+      <p>Eng talabgir sohalarda professional bilim oling</p>
+    </div>
+    <div class="courses-grid" id="coursesGrid">
+      <!-- JS orqali to'ldiriladi -->
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="container about-container">
+    <div class="about-visual">
+      <div class="about-card card1">
+        <div class="card-icon">🎯</div>
+        <h4>Maqsad</h4>
+        <p>Har bir talabani professional darajaga olib chiqish</p>
+      </div>
+      <div class="about-card card2">
+        <div class="card-icon">💡</div>
+        <h4>Metodologiya</h4>
+        <p>Amaliyot 70%, Nazariya 30%</p>
+      </div>
+      <div class="about-card card3">
+        <div class="card-icon">🏆</div>
+        <h4>Natija</h4>
+        <p>Xalqaro sertifikatlar va ish kafolati</p>
+      </div>
+    </div>
+    <div class="about-text">
+      <span class="section-tag">Biz Haqimizda</span>
+      <h2>IT sohasida <span class="gradient-text">Ishonchli</span> hamkoringiz</h2>
+      <p>BilTech 2016-yilda tashkil etilgan bo'lib, bugun O'zbekistonning eng yetakchi IT o'quv markazlaridan biriga aylandi. Bizda 8 yillik tajriba, 1200+ bitiruvchi va sanoatda ishlayotgan o'qituvchilar mavjud.</p>
+      <ul class="about-features">
+        <li>✅ Amaliy loyihalar bilan o'qitish</li>
+        <li>✅ Kichik guruhlar (max 12 kishi)</li>
+        <li>✅ Mentorlik va karyera yordami</li>
+        <li>✅ Zamonaviy laboratoriyalar</li>
+        <li>✅ Xalqaro standartdagi o'quv rejasi</li>
+      </ul>
+      <a href="#contact" class="btn-primary">Biz bilan bog'laning</a>
+    </div>
+  </div>
+</section>
+
+<!-- TEACHERS -->
+<section class="teachers" id="teachers">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Jamoa</span>
+      <h2>Bizning <span class="gradient-text">O'qituvchilar</span></h2>
+      <p>Soha mutaxassislari va sanoat tajribasi bor ustozlar</p>
+    </div>
+    <div class="teachers-grid" id="teachersGrid">
+      <!-- JS orqali -->
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Fikrlar</span>
+      <h2>Bitiruvchilar <span class="gradient-text">Nima deydi?</span></h2>
+    </div>
+    <div class="testimonials-slider" id="testimonialsSlider">
+      <!-- JS orqali -->
+    </div>
+    <div class="slider-dots" id="sliderDots"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="container contact-container">
+    <div class="contact-info">
+      <span class="section-tag">Aloqa</span>
+      <h2>Biz bilan <span class="gradient-text">Bog'laning</span></h2>
+      <p>Savollaringiz bo'lsa, bizga murojaat qiling. Konsultatsiya bepul!</p>
+      <div class="contact-details">
+        <div class="contact-item">
+          <span class="contact-icon">📍</span>
+          <div><strong>Manzil</strong><p>Andijon viloyati, Jalaquduq tumani, 14-kvartal</p></div>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">📞</span>
+          <div><strong>Telefon</strong><p>+998 97 666 55 06</p></div>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">✉️</span>
+          <div><strong>Email</strong><p>info@biltech.uz</p></div>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">🕐</span>
+          <div><strong>Ish vaqti</strong><p>Du–Sha: 9:00 – 20:00</p></div>
+        </div>
+      </div>
+      <div class="social-links">
+        <a href="#" class="social-btn">Telegram</a>
+        <a href="#" class="social-btn">Instagram</a>
+        <a href="#" class="social-btn">YouTube</a>
+      </div>
+    </div>
+    <div class="contact-form-wrap">
+      <form class="contact-form" onsubmit="submitForm(event)">
+        <h3>Ro'yxatdan O'ting</h3>
+        <div class="form-group">
+          <label>Ism Familiya</label>
+          <input type="text" id="cf-name" placeholder="Ali Karimov" required>
+        </div>
+        <div class="form-group">
+          <label>Telefon</label>
+          <input type="tel" id="cf-phone" placeholder="+998 90 000 00 00" required>
+        </div>
+        <div class="form-group">
+          <label>Qaysi kurs qiziqtiradi?</label>
+          <select id="cf-course">
+            <option value="">Tanlang...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Xabar</label>
+          <textarea id="cf-message" rows="3" placeholder="Qo'shimcha savollaringiz..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary w100">Yuborish →</button>
+        <div class="form-success" id="formSuccess">✅ Arizangiz qabul qilindi! Tez orada aloqaga chiqamiz.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <div class="logo"><span class="logo-icon">⟨BT⟩</span><span class="logo-text">BilTech</span></div>
+      <p>IT ta'limida yangi standart</p>
+    </div>
+    <div class="footer-links">
+      <h4>Kurslar</h4>
+      <ul id="footerCourses"></ul>
+    </div>
+    <div class="footer-links">
+      <h4>Markaz</h4>
+      <ul>
+        <li><a href="#about">Biz haqimizda</a></li>
+        <li><a href="#teachers">O'qituvchilar</a></li>
+        <li><a href="#contact">Aloqa</a></li>
+        <li><a href="admin.html">Admin panel</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Ijtimoiy tarmoqlar</h4>
+      <ul>
+        <li><a href="#">📱 Telegram kanali</a></li>
+        <li><a href="#">📸 Instagram</a></li>
+        <li><a href="#">▶️ YouTube</a></li>
+        <li><a href="#">💼 LinkedIn</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 BilTech IT O'quv Markazi. Barcha huquqlar himoyalangan.</p>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
